@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\CBook\CBookOrganisation;
+use App\Entity\Wellness\WellnessOrganisation;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Console\Command\Command;
@@ -45,13 +46,32 @@ class IntegrateCBook2WellnessCommand extends Command
             // ...
         }
 
-        $cbookOrgRepo = $this->registry->getRepository(CBookOrganisation::class);
+        $cbookOrgRepo = $this->registry->getRepository(CBookOrganisation::class, 'cbook');
+        $wellnessOrgRepo = $this->registry->getRepository(WellnessOrganisation::class, 'wellness');
 
         $cbookOrgs = $cbookOrgRepo->findAll();
 
+        $io->note('Going over each CBOOK organisation');
+        $i = 0;
         /** @var CBookOrganisation $cborg */
         foreach ($cbookOrgs as $cborg) {
-            $io->note($cborg->getName());
+            $i++;
+            $io->note($i . '. ' . $cborg->getName());
+            $io->note(sprintf('... %s is%slinked to Wellness. %s', $cborg->getName(), $cborg->isLinkedToWellness() ? ' ' : ' NOT ', $cborg->isLinkedToWellness() ? 'Start linking' : 'Skipping'));
+            if ($cborg->isLinkedToWellness()) {
+                if (empty($wellnessOrgId = $cborg->getWellnessId())) {
+                    $io->note('... ... Link Wellness Org since it is currently null');
+                    if (empty($cborg->getRegNo())) {
+                        $io->error('cbook org does not have reg no! Skipping this org');
+                        continue;
+                    } elseif (empty($wellnessOrg = $wellnessOrgRepo->findOneBy(['regNo' => $cborg->getRegNo()]))) {
+                        $io->error('Cannot locate Wellness Organisation with Reg No. ' . $cborg->getRegNo() . '. Skipping this org');
+                        continue;
+                    };
+                } else {
+
+                }
+            }
         }
 
         $io->success('You have a new command! Now make it your own! Pass --help to see your options.');

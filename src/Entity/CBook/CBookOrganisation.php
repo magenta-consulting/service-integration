@@ -18,7 +18,7 @@ use Magenta\Bundle\CBookModelBundle\Entity\User\User;
  * @ORM\Entity()
  * @ORM\Table(name="organisation__organisation")
  */
-class CBookOrganisation
+class CBookOrganisation extends CBookThing
 {
 
     /**
@@ -37,15 +37,37 @@ class CBookOrganisation
 
     /**
      * @var Collection
-     * @ORM\OneToMany(targetEntity="Magenta\Bundle\CBookModelBundle\Entity\Organisation\IndividualMember", mappedBy="organization")
+     * @ORM\OneToMany(targetEntity="App\Entity\CBook\CBookMember", mappedBy="organization")
      */
     protected $individualMembers;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", nullable=true)
+     * @var boolean|null
+     * @ORM\Column(type="boolean", name="linked_to_wellness", nullable=true)
      */
-    protected $name;
+    protected $linkedToWellness;
+    /**
+     * @var string|null
+     * @ORM\Column(length=150, name="reg_no", nullable=true)
+     */
+    protected
+        $regNo;
+    /**
+     * @var integer|null
+     * @ORM\Column(type="integer",name="wellness_id", nullable=true)
+     */
+    protected $wellnessId;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string",name="wellness_pin", nullable=true)
+     */
+    protected $wellnessPin;
+    /**
+     * @var string|null
+     * @ORM\Column(type="string",name="wellness_employee_code", nullable=true)
+     */
+    protected $wellnessEmployeeCode;
 
     /**
      * @return Collection
@@ -64,18 +86,106 @@ class CBookOrganisation
     }
 
     /**
-     * @return string
+     * @return bool|null
      */
-    public function getName(): string
+    public function getLinkedToWellness(): ?bool
     {
-        return $this->name;
+        return $this->linkedToWellness;
     }
 
     /**
-     * @param string $name
+     * @return bool
      */
-    public function setName(string $name): void
+    public function isLinkedToWellness(): bool
     {
-        $this->name = $name;
+        return !empty($this->linkedToWellness);
+    }
+
+    /**
+     * @param bool|null $linkedToWellness
+     */
+    public function setLinkedToWellness(?bool $linkedToWellness): void
+    {
+        $this->linkedToWellness = $linkedToWellness;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int|null $id
+     */
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getWellnessId(): ?int
+    {
+        return $this->wellnessId;
+    }
+
+    /**
+     * @param int|null $wellnessId
+     */
+    public function setWellnessId(?int $wellnessId): void
+    {
+        $this->wellnessId = $wellnessId;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getWellnessPin(): ?string
+    {
+        return $this->wellnessPin;
+    }
+
+    /**
+     * @param null|string $wellnessPin
+     */
+    public function setWellnessPin(?string $wellnessPin): void
+    {
+        $this->wellnessPin = $wellnessPin;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getWellnessEmployeeCode(): ?string
+    {
+        return $this->wellnessEmployeeCode;
+    }
+
+    /**
+     * @param null|string $wellnessEmployeeCode
+     */
+    public function setWellnessEmployeeCode(?string $wellnessEmployeeCode): void
+    {
+        $this->wellnessEmployeeCode = $wellnessEmployeeCode;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getRegNo(): ?string
+    {
+        return $this->regNo;
+    }
+
+    /**
+     * @param null|string $regNo
+     */
+    public function setRegNo(?string $regNo): void
+    {
+        $this->regNo = $regNo;
     }
 }

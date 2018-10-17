@@ -18,7 +18,7 @@ use Magenta\Bundle\CBookModelBundle\Entity\User\User;
  * @ORM\Entity()
  * @ORM\Table(name="organisation__individual_member")
  */
-class CBookMember
+class CBookMember extends CBookThing
 {
 
     /**
@@ -68,22 +68,22 @@ class CBookMember
 
 
     /**
-     * @var Organisation
-     * @ORM\ManyToOne(targetEntity="Magenta\Bundle\CBookModelBundle\Entity\Organisation\Organisation", inversedBy="individualMembers")
+     * @var CBookOrganisation
+     * @ORM\ManyToOne(targetEntity="App\Entity\CBook\CBookOrganisation", inversedBy="individualMembers")
      * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $organization;
 
     /**
-     * @return Organisation
+     * @return CBookOrganisation
      */
-    public function getOrganization(): Organisation
+    public function getOrganization(): CBookOrganisation
     {
         return $this->organization;
     }
 
     /**
-     * @param Organisation $organization
+     * @param CBookOrganisation $organization
      */
     public function setOrganization(Organisation $organization): void
     {

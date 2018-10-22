@@ -59,6 +59,12 @@ class CBookOrganisation extends CBookThing
     protected $wellnessId;
 
     /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    protected $code;
+
+    /**
      * @var string|null
      * @ORM\Column(type="string",name="wellness_pin", nullable=true)
      */
@@ -68,6 +74,12 @@ class CBookOrganisation extends CBookThing
      * @ORM\Column(type="string",name="wellness_employee_code", nullable=true)
      */
     protected $wellnessEmployeeCode;
+
+    /**
+     * @var \DateTime|null
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $synchronisedAt;
 
     /**
      * @return Collection
@@ -187,5 +199,37 @@ class CBookOrganisation extends CBookThing
     public function setRegNo(?string $regNo): void
     {
         $this->regNo = $regNo;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getSynchronisedAt(): ?\DateTime
+    {
+        return $this->synchronisedAt;
+    }
+
+    /**
+     * @param \DateTime|null $synchronisedAt
+     */
+    public function setSynchronisedAt(?\DateTime $synchronisedAt): void
+    {
+        $this->synchronisedAt = $synchronisedAt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCode(): string
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param string $code
+     */
+    public function setCode(string $code): void
+    {
+        $this->code = $code;
     }
 }

@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="thing__thing")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
- * @ORM\DiscriminatorMap({"individual" = "CBookMember", "organisation" = "CBookOrganisation"})
+ * @ORM\DiscriminatorMap({"individual" = "CBookMember", "organisation" = "CBookOrganisation", "person"="CBookPerson"})
  * @ORM\HasLifecycleCallbacks
  */
 abstract class CBookThing
@@ -31,6 +31,18 @@ abstract class CBookThing
   public function __construct()
   {
   }
+
+    /**
+     * @var \DateTime|null
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $updatedAt;
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean", name="enabled", options={"default":false})
+     */
+    protected
+        $enabled;
 
     /**
      * @var string
@@ -68,5 +80,37 @@ abstract class CBookThing
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime|null $updatedAt
+     */
+    public function setUpdatedAt(?\DateTime $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     */
+    public function setEnabled(bool $enabled): void
+    {
+        $this->enabled = $enabled;
     }
 }

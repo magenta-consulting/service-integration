@@ -45,11 +45,31 @@ class WellnessOrganisation
         $id;
 
     /**
+     * @var WellnessEmployer
+     * @ORM\OneToOne(targetEntity="App\Entity\Wellness\WellnessEmployer", mappedBy="organisation", cascade={"all"}, orphanRemoval=true)
+     */
+    private
+        $employer;
+
+    /**
      * @var \DateTime $createdAt
      * @ORM\Column(type="datetime", name="created_at")
      */
     private
         $createdAt;
+
+
+    /**
+     * @var \DateTime|null
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $synchronisedAt;
+    /**
+     * @var \DateTime $updatedAt
+     * @ORM\Column(type="datetime", name="updated_at", nullable=true)
+     */
+    private
+        $updatedAt;
 
     /**
      * @var integer|null
@@ -389,7 +409,7 @@ class WellnessOrganisation
     }
 
     /**
-     * @return BusinessEmployer
+     * @return WellnessEmployer
      */
     public
     function getEmployer()
@@ -398,7 +418,7 @@ class WellnessOrganisation
     }
 
     /**
-     * @param BusinessEmployer $employer
+     * @param WellnessEmployer $employer
      */
     public
     function setEmployer(
@@ -1058,4 +1078,69 @@ class WellnessOrganisation
     {
         $this->cbookId = $cbookId;
     }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getSynchronisedAt(): ?\DateTime
+    {
+        return $this->synchronisedAt;
+    }
+
+    /**
+     * @param \DateTime|null $synchronisedAt
+     */
+    public function setSynchronisedAt(?\DateTime $synchronisedAt): void
+    {
+        $this->synchronisedAt = $synchronisedAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt(\DateTime $updatedAt): void
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTypeSalesPartner(): bool
+    {
+        return $this->typeSalesPartner;
+    }
+
+    /**
+     * @param bool $typeSalesPartner
+     */
+    public function setTypeSalesPartner(bool $typeSalesPartner): void
+    {
+        $this->typeSalesPartner = $typeSalesPartner;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdminName(): string
+    {
+        return $this->adminName;
+    }
+
+    /**
+     * @param string $adminName
+     */
+    public function setAdminName(string $adminName): void
+    {
+        $this->adminName = $adminName;
+    }
+
 }

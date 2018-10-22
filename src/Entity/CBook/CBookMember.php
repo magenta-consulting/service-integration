@@ -5,7 +5,6 @@ namespace App\Entity\CBook;
 use Bean\Component\Organization\Model\IndividualMember as MemberModel;
 
 use Bean\Component\Organization\Model\OrganizationInterface;
-use Bean\Component\Person\Model\Person;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -36,6 +35,48 @@ class CBookMember extends CBookThing
         $this->groups = new ArrayCollection();
         $this->enabled = true;
     }
+
+    /**
+     * @var CBookPerson|null
+     * @ORM\ManyToOne(targetEntity="App\Entity\CBook\CBookPerson", inversedBy="individualMembers")
+     * @ORM\JoinColumn(name="id_person", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $person;
+
+    /**
+     * @var \DateTime|null
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $synchronisedAt;
+    /**
+     * @var integer
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $wellnessId;
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $wellnessPin;
+
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $wellnessEmployeeCode;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=20,nullable=true, unique=true)
+     */
+    protected $code;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string",nullable=true)
+     */
+    protected $pin;
 
     public function getBooksToRead()
     {
@@ -85,8 +126,120 @@ class CBookMember extends CBookThing
     /**
      * @param CBookOrganisation $organization
      */
-    public function setOrganization(Organisation $organization): void
+    public function setOrganization(CBookOrganisation $organization): void
     {
         $this->organization = $organization;
+    }
+
+    /**
+     * @return CBookPerson|null
+     */
+    public function getPerson(): ?CBookPerson
+    {
+        return $this->person;
+    }
+
+    /**
+     * @param CBookPerson|null $person
+     */
+    public function setPerson(?CBookPerson $person): void
+    {
+        $this->person = $person;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getSynchronisedAt(): ?\DateTime
+    {
+        return $this->synchronisedAt;
+    }
+
+    /**
+     * @param \DateTime|null $synchronisedAt
+     */
+    public function setSynchronisedAt(?\DateTime $synchronisedAt): void
+    {
+        $this->synchronisedAt = $synchronisedAt;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWellnessId(): ?int
+    {
+        return $this->wellnessId;
+    }
+
+    /**
+     * @param int $wellnessId
+     */
+    public function setWellnessId(int $wellnessId): void
+    {
+        $this->wellnessId = $wellnessId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWellnessPin(): string
+    {
+        return $this->wellnessPin;
+    }
+
+    /**
+     * @param string $wellnessPin
+     */
+    public function setWellnessPin(string $wellnessPin): void
+    {
+        $this->wellnessPin = $wellnessPin;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWellnessEmployeeCode(): string
+    {
+        return $this->wellnessEmployeeCode;
+    }
+
+    /**
+     * @param string $wellnessEmployeeCode
+     */
+    public function setWellnessEmployeeCode(string $wellnessEmployeeCode): void
+    {
+        $this->wellnessEmployeeCode = $wellnessEmployeeCode;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param null|string $code
+     */
+    public function setCode(?string $code): void
+    {
+        $this->code = $code;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getPin(): ?string
+    {
+        return $this->pin;
+    }
+
+    /**
+     * @param null|string $pin
+     */
+    public function setPin(?string $pin): void
+    {
+        $this->pin = $pin;
     }
 }

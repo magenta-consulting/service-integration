@@ -218,6 +218,17 @@ class IntegrateCBook2WellnessCommand extends Command
                                     continue;
                                 }
 
+                                // let's fix old data first
+                                if (empty($member->getWellnessPin()) || empty($member->getWellnessPin())) {
+                                    $io->note('... ... ... ... Fix empty Wellness PIN/Code when wellnessId is present.');
+
+                                    $member->setWellnessPin($wemployee->getPinCode());
+                                    $member->setWellnessEmployeeCode($wemployee->getEmployeeCode());
+                                    $cbookManager->persist($member);
+                                    $cbookManager->flush($member);
+                                }
+                                // end fixing
+
                                 if (empty($member->getSynchronisedAt()) || $member->getSynchronisedAt() < $member->getUpdatedAt() || $wemployee->getSynchronisedAt() < $wemployee->getUpdatedDate()) {
                                     $io->note('... ... ... ... Synchronise Members (' . $wellnessOrgId . ')');
                                     if ($wemployee->getUpdatedDate() < $member->getUpdatedAt()) {

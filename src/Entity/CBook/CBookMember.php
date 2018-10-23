@@ -48,19 +48,19 @@ class CBookMember extends CBookThing
      */
     protected $synchronisedAt;
     /**
-     * @var integer
+     * @var integer|null
      * @ORM\Column(type="integer", nullable=true)
      */
     protected $wellnessId;
     /**
-     * @var string
+     * @var string|null
      * @ORM\Column(type="string", nullable=true)
      */
     protected $wellnessPin;
 
 
     /**
-     * @var string
+     * @var string|null
      * @ORM\Column(type="string", nullable=true)
      */
     protected $wellnessEmployeeCode;
@@ -181,7 +181,7 @@ class CBookMember extends CBookThing
     /**
      * @return string
      */
-    public function getWellnessPin(): string
+    public function getWellnessPin(): ?string
     {
         return $this->wellnessPin;
     }
@@ -189,7 +189,7 @@ class CBookMember extends CBookThing
     /**
      * @param string $wellnessPin
      */
-    public function setWellnessPin(string $wellnessPin): void
+    public function setWellnessPin(?string $wellnessPin): void
     {
         $this->wellnessPin = $wellnessPin;
     }
@@ -197,7 +197,7 @@ class CBookMember extends CBookThing
     /**
      * @return string
      */
-    public function getWellnessEmployeeCode(): string
+    public function getWellnessEmployeeCode(): ?string
     {
         return $this->wellnessEmployeeCode;
     }
@@ -205,7 +205,7 @@ class CBookMember extends CBookThing
     /**
      * @param string $wellnessEmployeeCode
      */
-    public function setWellnessEmployeeCode(string $wellnessEmployeeCode): void
+    public function setWellnessEmployeeCode(?string $wellnessEmployeeCode): void
     {
         $this->wellnessEmployeeCode = $wellnessEmployeeCode;
     }

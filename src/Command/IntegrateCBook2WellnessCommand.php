@@ -61,7 +61,7 @@ class IntegrateCBook2WellnessCommand extends Command
 
         $wellnessEmployeeRepo = $this->registry->getRepository(WellnessEmployee::class, 'wellness');
 
-        $cbookOrgs = $cbookOrgRepo->findAll();
+        $cbookOrgs = $cbookOrgRepo->findBy(['linkedToWellness' => true, 'enabled' => true]);
 
         $io->note('Going over each CBOOK organisation');
         $i = 0;

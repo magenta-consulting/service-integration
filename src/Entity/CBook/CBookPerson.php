@@ -19,6 +19,7 @@ class CBookPerson extends CBookThing
 
     public function __construct()
     {
+        parent::__construct();
         $this->individualMembers = new ArrayCollection();
     }
 

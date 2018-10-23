@@ -19,7 +19,6 @@ use Magenta\Bundle\CBookModelBundle\Entity\User\User;
  */
 class CBookMember extends CBookThing
 {
-
     /**
      * @var int|null
      * @ORM\Id

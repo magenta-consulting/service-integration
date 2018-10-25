@@ -105,6 +105,13 @@ class CBookPerson extends CBookThing
     protected $user;
 
     /**
+     * Email address.
+     * @var string|null
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $email;
+
+    /**
      * @var \DateTime|null
      * @ORM\Column(type="datetime",nullable=true)
      */
@@ -163,5 +170,21 @@ class CBookPerson extends CBookThing
     public function setBirthDate(?\DateTime $birthDate): void
     {
         $this->birthDate = $birthDate;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param null|string $email
+     */
+    public function setEmail(?string $email): void
+    {
+        $this->email = $email;
     }
 }

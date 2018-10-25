@@ -130,50 +130,14 @@ class IntegrateCBook2WellnessCommand extends Command
                             if (empty($wellnessId = $member->getWellnessId())) {
                                 $io->note('... ... ... ... wellnessId is empty -> Associate wellnessId of CBookMember with WellnessMember');
                                 $io->note('... ... ... ... ... Looking for Wellness Member with the given wellnessOrgId and memberIdNumber (' . $member->getPerson()->getIdNumber() . ')');
-                                $wellnessEmployees = $wellnessEmployeeRepo->findBy(['idNumber' => $member->getPerson()->getIdNumber()]);
-                                if (count($wellnessEmployees) === 0) {
-                                    $io->note('... ... ... ... ... Wellness Member not found. Count == 0. Try to create one');
-                                    $now = new \DateTime();
-                                    $newWEmployee = new WellnessEmployee();
-                                    $newWEmployee->setEmployer($wellnessOrg->getEmployer());
-
-                                    $newWEmployee->setEnabled(true);
-                                    $newWEmployee->setUpdatedDate($now);
-                                    $newWEmployee->initiateEmployeeCode();
-                                    $newWEmployee->initiatePinCode();
-                                    $newWEmployee->setIdNumber($member->getPerson()->getIdNumber());
-                                    $newWEmployee->setSynchronisedAt($now);
-                                    $newWEmployee->setName($member->getPerson()->getName());
-                                    $newWEmployee->setDob($member->getPerson()->getBirthDate());
-
-                                    $newWEmployee->setCbookId($member->getId());
-                                    $newWEmployee->setCbookEmployeeCode($member->getCode());
-                                    $newWEmployee->setCbookPin($member->getPin());
-
-                                    $wellnessManager->persist($newWEmployee);
-                                    $wellnessManager->flush($newWEmployee);
-
-                                    $member->setWellnessPin($newWEmployee->getPinCode());
-                                    $member->setWellnessEmployeeCode($newWEmployee->getEmployeeCode());
-                                    $member->setWellnessId($newWEmployee->getId());
-                                    $member->setSynchronisedAt($now);
-                                    $member->setUpdatedAt($now);
-
-                                    $cbookManager->persist($member);
-                                    continue;
-                                }
                                 /**
                                  * @var WellnessEmployee $wemployee
                                  */
-                                $wemployee = null;
-                                /**
-                                 * @var WellnessEmployee $we
-                                 */
-                                foreach ($wellnessEmployees as $we) {
-                                    if ($we->getEmployer()->getWellnessOrganisation()->getId() === $wellnessOrgId) {
-                                        $wemployee = $we;
-                                    }
-                                }
+                                $wemployee = $wellnessEmployeeRepo->findOneBy([
+                                    'employer' => $wellnessOrg->getEmployer()->getId(),
+                                    'idNumber' => $member->getPerson()->getIdNumber()
+                                ]);
+
                                 if (empty($wemployee)) {
                                     $io->note('... ... ... ... ... Wellness Member for this emlpoyer (' . $wellnessOrgId . ' cannot be found. Try to create one');
                                     $now = new \DateTime();
@@ -205,6 +169,7 @@ class IntegrateCBook2WellnessCommand extends Command
                                     $cbookManager->persist($member);
                                     continue;
                                 }
+
                                 $io->note('... ... ... ... ...  Associate CBookMember (' . $member->getId() . ') with WellnessEmployee (' . $wemployee->getId() . ')');
                                 $wemployee->setCbookId($member->getId());
                                 $member->setWellnessId($wemployee->getId());
@@ -261,11 +226,22 @@ class IntegrateCBook2WellnessCommand extends Command
                             }
                         }
                         $io->note('... ... Synchronise Wellness Members (' . $wellnessOrgId . ') and only query Wellness with cbookId == null');
-                        $orphanWellness = $wellnessEmployeeRepo->findBy(['cbookId' => null]);
+                        $orphanWellness = $wellnessEmployeeRepo->findBy([
+                            'employer' => $wellnessOrg->getEmployer()->getId(),
+                            'cbookId' => null
+                        ]);
                         /** @var WellnessEmployee $ow */
                         foreach ($orphanWellness as $ow) {
+                            $person = null;
                             $io->note('... ... ... Working on WellnessEmployee (' . $ow->getId() . ': ' . $ow->getName() . ': ' . $ow->getIdNumber() . ')');
-                            $person = $cbookPersonRepo->findOneBy(['idNumber' => $ow->getIdNumber()]);
+                            if (empty($email = $ow->getEmailAddress())) {
+                                $person = $cbookPersonRepo->findOneBy(['idNumber' => $ow->getIdNumber()]);
+                            } else {
+                                if (empty($person)) {
+                                    $person = $cbookPersonRepo->findOneBy(['email' => $ow->getEmailAddress()]);
+                                }
+                            }
+
                             if (empty($person)) {
                                 $io->note('... ... ... CBookPerson NOT found for WellnessEmployee (' . $ow->getId() . ': ' . $ow->getName() . '). Try to create one');
                                 $person = new CBookPerson();
@@ -290,6 +266,7 @@ class IntegrateCBook2WellnessCommand extends Command
                                 $cbookManager->persist($member);
                                 $cbookManager->flush();
                             }
+
                             $io->note('... ... ... CBookMember - associate CBookMember with WellnessEmployee');
                             $member->setWellnessId($ow->getId());
                             $member->setWellnessEmployeeCode($ow->getEmployeeCode());

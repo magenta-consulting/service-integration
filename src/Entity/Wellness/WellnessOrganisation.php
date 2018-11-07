@@ -78,6 +78,12 @@ class WellnessOrganisation
     protected $cbookId;
 
     /**
+     * @var boolean|null
+     * @ORM\Column(type="boolean", name="linked_to_cbook", nullable=true)
+     */
+    protected $linkedToCBook;
+
+    /**
      * @var bool
      * @ORM\Column(type="boolean", name="enabled", options={"default":false})
      */
@@ -1141,6 +1147,33 @@ class WellnessOrganisation
     public function setAdminName(string $adminName): void
     {
         $this->adminName = $adminName;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLinkedToCBook(): bool
+    {
+        if ($this->linkedToCBook === null) {
+            return false;
+        }
+        return $this->linkedToCBook;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getLinkedToCBook(): ?bool
+    {
+        return $this->linkedToCBook;
+    }
+
+    /**
+     * @param bool|null $linkedToCBook
+     */
+    public function setLinkedToCBook(?bool $linkedToCBook): void
+    {
+        $this->linkedToCBook = $linkedToCBook;
     }
 
 }

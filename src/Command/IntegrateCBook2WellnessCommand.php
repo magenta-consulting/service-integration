@@ -86,6 +86,8 @@ class IntegrateCBook2WellnessCommand extends Command
                     $io->note('... Associate CBookOrg (' . $cborg->getId() . ') with WellnessOrg (' . $wellnessOrgId . ')');
                     $cborg->setWellnessId($wellnessOrgId);
                     $wellnessOrg->setCbookId($cborg->getId());
+                    $wellnessOrg->setLinkedToCBook(true);
+
                     $cbookManager->persist($cborg);
                     $wellnessManager->persist($wellnessOrg);
                 } else {
@@ -151,6 +153,8 @@ class IntegrateCBook2WellnessCommand extends Command
                                     $newWEmployee->setIdNumber($member->getPerson()->getIdNumber());
                                     $newWEmployee->setSynchronisedAt($now);
                                     $newWEmployee->setName($member->getPerson()->getName());
+                                    $newWEmployee->setFirstname($member->getPerson()->getGivenName());
+                                    $newWEmployee->setLastname($member->getPerson()->getFamilyName());
                                     $newWEmployee->setDob($member->getPerson()->getBirthDate());
 
                                     $newWEmployee->setCbookId($member->getId());
@@ -247,6 +251,8 @@ class IntegrateCBook2WellnessCommand extends Command
                                 $person = new CBookPerson();
                                 $person->setEnabled(true);
                                 $person->setName($ow->getName());
+                                $person->setFamilyName($ow->getLastname());
+                                $person->setGivenName($ow->getFirstname());
                                 $person->setIdNumber($ow->getIdNumber());
                                 $person->setBirthDate($ow->getDob());
                                 $cbookManager->persist($person);
@@ -285,6 +291,28 @@ class IntegrateCBook2WellnessCommand extends Command
                             $wellnessManager->persist($ow);
                             $cbookManager->persist($member);
                         }
+
+                        if (count($orphanWellness) === 0) {
+                            // clean up CBook Members
+
+                        }
+                    }
+                }
+            } else {
+                if (!empty($wellnessOrgId = $cborg->getWellnessId())) {
+                    if ($cborg->getSynchronisedAt() < $cborg->getUpdatedAt()) {
+                        if (!empty($wellnessOrg = $wellnessOrgRepo->find($wellnessOrgId))) {
+                            if ($wellnessOrg->isLinkedToCBook()) {
+                                $wellnessOrg->setLinkedToCBook(false);
+                                $now = new \DateTime();
+                                $wellnessOrg->setSynchronisedAt($now);
+                                $cborg->setSynchronisedAt($now);
+                                $wellnessManager->persist($wellnessOrg);
+                                $cbookManager->persist($cborg);
+                                $cbookManager->flush();
+                                $wellnessManager->flush();
+                            }
+                        };
                     }
                 }
             }

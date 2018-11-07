@@ -104,6 +104,21 @@ class CBookPerson extends CBookThing
      */
     protected $user;
 
+
+    /**
+     * Given name. In the U.S., the first name of a Person. This can be used along with familyName instead of the name property.
+     * @var string|null
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $givenName;
+
+    /**
+     * Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.
+     * @var string|null
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $familyName;
+
     /**
      * Email address.
      * @var string|null
@@ -186,5 +201,37 @@ class CBookPerson extends CBookThing
     public function setEmail(?string $email): void
     {
         $this->email = $email;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getGivenName(): ?string
+    {
+        return $this->givenName;
+    }
+
+    /**
+     * @param null|string $givenName
+     */
+    public function setGivenName(?string $givenName): void
+    {
+        $this->givenName = $givenName;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getFamilyName(): ?string
+    {
+        return $this->familyName;
+    }
+
+    /**
+     * @param null|string $familyName
+     */
+    public function setFamilyName(?string $familyName): void
+    {
+        $this->familyName = $familyName;
     }
 }

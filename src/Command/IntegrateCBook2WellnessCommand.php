@@ -50,8 +50,8 @@ class IntegrateCBook2WellnessCommand extends Command
             // ...
         }
 
-        $cbookManager = $this->registry->getManager('cbook');
-        $wellnessManager = $this->registry->getManager('wellness');
+        $cbookManager = $this->registry->getEntityManager('cbook');
+        $wellnessManager = $this->registry->getEntityManager('wellness');
 
         $cbookOrgRepo = $this->registry->getRepository(CBookOrganisation::class, 'cbook');
         $wellnessOrgRepo = $this->registry->getRepository(WellnessOrganisation::class, 'wellness');
@@ -195,7 +195,7 @@ class IntegrateCBook2WellnessCommand extends Command
                                     $member->setWellnessEmployeeCode($wemployee->getEmployeeCode());
                                     $member->setEnabled($wemployee->isEnabled());
                                     $cbookManager->persist($member);
-                                    $cbookManager->flush();
+                                    $cbookManager->flush($member);
                                 }
                                 // end fixing
 
@@ -256,7 +256,7 @@ class IntegrateCBook2WellnessCommand extends Command
                                 $person->setIdNumber($ow->getIdNumber());
                                 $person->setBirthDate($ow->getDob());
                                 $cbookManager->persist($person);
-                                $cbookManager->flush();
+                                $cbookManager->flush($person);
                             }
 
                             $io->note('... ... ... CBookPerson (' . $person->getId() . ': ' . $person->getName() . ') is ready for WellnessEmployee (' . $ow->getId() . ': ' . $ow->getName() . ')');
@@ -270,7 +270,7 @@ class IntegrateCBook2WellnessCommand extends Command
                                 $member->setPerson($person);
                                 $member->setOrganization($cborg);
                                 $cbookManager->persist($member);
-                                $cbookManager->flush();
+                                $cbookManager->flush($member);
                             }
 
                             $io->note('... ... ... CBookMember - associate CBookMember with WellnessEmployee');
@@ -309,8 +309,6 @@ class IntegrateCBook2WellnessCommand extends Command
                                 $cborg->setSynchronisedAt($now);
                                 $wellnessManager->persist($wellnessOrg);
                                 $cbookManager->persist($cborg);
-                                $cbookManager->flush();
-                                $wellnessManager->flush();
                             }
                         };
                     }

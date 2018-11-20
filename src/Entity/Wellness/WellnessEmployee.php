@@ -82,89 +82,7 @@ class WellnessEmployee
         }
         $this->enabled = $enabled;
     }
-
-    public function getClaimableBenefits()
-    {
-        $claimableBenefits = new ArrayCollection();
-        /** @var BusinessBenefit $benefit */
-        foreach ($this->benefits as $benefit) {
-            if ($benefit->isClaimable()) {
-                $claimableBenefits->add($benefit);
-            }
-        }
-
-        return $claimableBenefits;
-    }
-
-    /**
-     * @return array
-     */
-    public function getNewPurchases()
-    {
-        $benefitPurchases = new ArrayCollection();
-        $orderPurchases = new ArrayCollection();
-        $newPurchases = ['benefit' => $benefitPurchases, 'order' => $orderPurchases];
-        /** @var BusinessBenefit $benefit */
-        foreach ($this->benefits as $benefit) {
-            if ($benefit->isEnabled()) {
-                if (empty($this->covered)) {
-                    if (!empty($purchase = $benefit->getPurchase())) {
-                        $benefitPurchases->add($benefit);
-                    }
-                }
-            }
-        }
-
-        $claimableCriteria = Criteria::create()->where(Criteria::expr()->eq("claimable", true))->orderBy(['id' => 'DESC']);
-        $claimableOrders = $this->orders->matching($claimableCriteria);
-        /** @var BusinessOrder $order */
-        foreach ($claimableOrders as $order) {
-            if (!empty($purchase = $order->getPurchase()) && $purchase->isPaid() && $purchase->isEnabled() && $order->isClaimable()) {
-                $items = $order->getItems();
-                /** @var BusinessOrderItem $item */
-                foreach ($items as $item) {
-                    if ($item->isClaimable()) {
-                        $orderPurchases->add($item);
-                    }
-                }
-            }
-        }
-
-        return $newPurchases;
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getValidBenefits()
-    {
-        $enabledBenefits = new ArrayCollection();
-        /** @var BusinessBenefit $benefit */
-        foreach ($this->benefits as $benefit) {
-            if ($benefit->isEnabled() && $benefit->getEntitlementBalance() !== 0) {
-                $enabledBenefits->add($benefit);
-            }
-        }
-
-        return $enabledBenefits;
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getEnabledBenefits()
-    {
-        $enabledBenefits = new ArrayCollection();
-        /** @var BusinessBenefit $benefit */
-        foreach ($this->benefits as $benefit) {
-            if ($benefit->isEnabled()) {
-                $enabledBenefits->add($benefit);
-            }
-        }
-
-        return $enabledBenefits;
-    }
-
+ 
     /**
      * @return string
      */
@@ -189,93 +107,6 @@ class WellnessEmployee
         if (empty($this->employeeCode)) {
             $this->employeeCode = str_replace('O', '0', WellnessUser::generate4DigitCode() . '-' . WellnessUser::generateTimestampBasedCode());
         }
-    }
-
-    /**
-     * @param Product $product
-     *
-     * @return BusinessBenefit
-     */
-    public function getBenefitByProduct(Product $product)
-    {
-        /** @var BusinessBenefit $benefit */
-        foreach ($this->benefits as $benefit) {
-            if ($benefit->getProduct()->getProduct()->getProduct()->getId() === $product->getId()) {
-                if (!$benefit->isEnabled()) {
-                    return null;
-                }
-
-                return $benefit;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param null $id
-     *
-     * @return BusinessBenefit|null
-     */
-    public function getBenefit($id = null)
-    {
-        /** @var BusinessBenefit $benefit */
-        foreach ($this->benefits as $benefit) {
-            if ($benefit->getId() === $id) {
-                if (!$benefit->isEnabled()) {
-                    return null;
-                }
-
-                return $benefit;
-            }
-        }
-
-        return null;
-    }
-
-    public function hasBenefit(ChannelPartnerEmployerNonVoucherProduct $product)
-    {
-        /** @var BusinessBenefit $benefit */
-        foreach ($this->benefits as $benefit) {
-            if ($benefit->getProduct() === $product) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param ChannelPartnerEmployerNonVoucherProduct $product
-     *
-     * @return BusinessBenefit|bool
-     */
-    public function getBenefitByCPENonVoucherProduct(ChannelPartnerEmployerNonVoucherProduct $product)
-    {
-        /** @var BusinessBenefit $benefit */
-        foreach ($this->benefits as $benefit) {
-            if ($benefit->getProduct() === $product) {
-                return $benefit;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param ChannelPartnerEmployerNonVoucherProduct $product
-     *
-     * @return BusinessBenefit
-     */
-    public function addBenefitFromProduct(ChannelPartnerEmployerNonVoucherProduct $product)
-    {
-        $benefit = new BusinessBenefit();
-        $this->employer->addBenefit($benefit);
-        $benefit->setProduct($product);
-
-        $this->addBenefit($benefit);
-
-        return $benefit;
     }
 
     /**
@@ -395,48 +226,12 @@ class WellnessEmployee
      */
     private $benefits;
 
-    public function addBenefit(BusinessBenefit $product)
-    {
-        $this->benefits->add($product);
-        $product->setEmployee($this);
-    }
-
-    public function removeBenefit(BusinessBenefit $product)
-    {
-        $this->benefits->removeElement($product);
-        $product->setEmployee(null);
-    }
-
     /**
      * @var WellnessEmployer
      * @ORM\ManyToOne(targetEntity="App\Entity\Wellness\WellnessEmployer",inversedBy="employees", fetch="EAGER")
      * @ORM\JoinColumn(name="id_employer", referencedColumnName="id")
      */
     private $employer;
-
-    /**
-     * var ArrayCollection
-     * ORM\OneToMany(targetEntity="AppBundle\Entity\CRM\Client", mappedBy="employee", cascade={"all"})
-     */
-    private $clients;
-
-    /**
-     * @param Client $client
-     */
-    public function addClient($client)
-    {
-        $this->clients->add($client);
-        $client->setEmployee($this);
-    }
-
-    /**
-     * @param Client $client
-     */
-    public function removeClient($client)
-    {
-        $this->clients->removeElement($client);
-        $client->setEmployee(null);
-    }
 
     /**
      * var Position

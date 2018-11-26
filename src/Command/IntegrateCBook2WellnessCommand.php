@@ -320,6 +320,10 @@ class IntegrateCBook2WellnessCommand extends Command
                         
                     }
                 }
+                if($cborg->getSlug() !== $wellnessOrg->getSlug()){
+                    $wellnessOrg->setSlug($cborg->getSlug());
+                    $wellnessManager->persist($wellnessOrg);
+                }
             } else {
                 if (!empty($wellnessOrgId = $cborg->getWellnessId())) {
                     if ($cborg->getSynchronisedAt() < $cborg->getUpdatedAt()) {

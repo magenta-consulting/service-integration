@@ -63,6 +63,12 @@ class CBookOrganisation extends CBookThing
      * @ORM\Column(type="string")
      */
     protected $code;
+    
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    protected $slug;
 
     /**
      * @var string|null
@@ -231,5 +237,21 @@ class CBookOrganisation extends CBookThing
     public function setCode(string $code): void
     {
         $this->code = $code;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+    
+    /**
+     * @param string $slug
+     */
+    public function setSlug(string $slug): void
+    {
+        $this->slug = $slug;
     }
 }

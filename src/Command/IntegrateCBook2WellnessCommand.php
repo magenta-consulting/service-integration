@@ -234,6 +234,12 @@ class IntegrateCBook2WellnessCommand extends Command
                             'employer' => $wellnessOrg->getEmployer()->getId(),
                             'cbookId' => null
                         ]);
+                        if(empty($orphanWellness)){
+                            $orphanWellness = $wellnessEmployeeRepo->findBy([
+                                'employer' => $wellnessOrg->getEmployer()->getId(),
+                                'cbookPin' => null
+                            ]);
+                        }
                         /** @var WellnessEmployee $ow */
                         foreach ($orphanWellness as $ow) {
                             $person = null;

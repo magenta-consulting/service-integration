@@ -2,8 +2,6 @@
 
 namespace App\Entity\CBook;
 
-use Bean\Component\Organization\Model\IndividualMember as MemberModel;
-
 use Bean\Component\Organization\Model\OrganizationInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Magenta\Bundle\CBookModelBundle\Entity\Book\Book;
 use Magenta\Bundle\CBookModelBundle\Entity\Media\Media;
 use Magenta\Bundle\CBookModelBundle\Entity\System\AccessControl\ACRole;
-use Magenta\Bundle\CBookModelBundle\Entity\User\User;
 
 /**
  * @ORM\Entity()

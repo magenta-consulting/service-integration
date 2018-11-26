@@ -208,17 +208,6 @@ class WellnessEmployee
      */
     private $orders;
 
-    public function addOrder(BusinessOrder $order)
-    {
-        $this->orders->add($order);
-        $order->setEmployee($this);
-    }
-
-    public function removeOrder(BusinessOrder $order)
-    {
-        $this->orders->removeElement($order);
-        $order->setEmployee(null);
-    }
 
     /**
      * var ArrayCollection

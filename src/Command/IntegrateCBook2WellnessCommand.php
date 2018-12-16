@@ -125,7 +125,7 @@ class IntegrateCBook2WellnessCommand extends Command
                                 $wellnessManager->persist(($wellnessOrg));
                             }
                         }
-                        $io->note('... ... Synchronise CBook Members (' . $cborg->getId() . ')');
+                        $io->note('... ... Synchronise CBook Members for CBookOrg (' . $cborg->getId() . ')');
                         /** @var CBookMember $member */
                         foreach ($cborg->getIndividualMembers() as $member) {
                             $io->note('... ... ... Working on person (' . $member->getPerson()->getId() . ') ' . $member->getPerson()->getName());
@@ -205,9 +205,9 @@ class IntegrateCBook2WellnessCommand extends Command
                                 }
                                 // end fixing
                                 
-                                if (empty($member->getSynchronisedAt()) || $member->getSynchronisedAt() < $member->getUpdatedAt() || $wemployee->getSynchronisedAt() < $wemployee->getUpdatedDate()) {
+                                if (empty($member->getSynchronisedAt()) || $member->getSynchronisedAt() < $member->getUpdatedAt() || empty($wemployee->getSynchronisedAt()) || $wemployee->getSynchronisedAt() < $wemployee->getUpdatedDate()) {
                                     $io->note('... ... ... ... Synchronise Members (' . $wellnessOrgId . ')');
-                                    if ($wemployee->getUpdatedDate() < $member->getUpdatedAt()) {
+                                    if (empty($wemployee->getSynchronisedAt()) || $wemployee->getUpdatedDate() < $member->getUpdatedAt()) {
                                         $io->note('... ... ... Update Wellness (' . $wemployee->getId() . ': ' . $wemployee->getName() . ') with CBook Info (' . $member->getId() . ': ' . $member->getPerson()->getName() . ')');
                                         
                                         $member->initiateCode();

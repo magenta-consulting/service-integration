@@ -152,13 +152,13 @@ class IntegrateCBook2WellnessCommand extends Command
                                     $newWEmployee->initiatePinCode();
                                     $newWEmployee->setIdNumber($member->getPerson()->getIdNumber());
                                     $newWEmployee->setEmailAddress($member->getPerson()->getEmail());
-    
+                                    
                                     $newWEmployee->setSynchronisedAt($now);
                                     $newWEmployee->setName($member->getPerson()->getName());
                                     $newWEmployee->setFirstname($member->getPerson()->getGivenName());
                                     $newWEmployee->setLastname($member->getPerson()->getFamilyName());
                                     $newWEmployee->setDob($member->getPerson()->getBirthDate());
-    
+                                    
                                     $member->initiateCode();
                                     $member->initiatePin();
                                     $newWEmployee->setCbookId($member->getId());
@@ -178,7 +178,7 @@ class IntegrateCBook2WellnessCommand extends Command
                                     continue;
                                 }
                                 
-                                $io->note('... ... ... ... ...  Associate CBookMember (' . $member->getId() . ') with WellnessEmployee (' . $wemployee->getId() . ')');
+                                $io->note('... ... ... ... ...  Associate CBookMemberID (' . $member->getId() . ') with WellnessEmployee (' . $wemployee->getId() . ')');
                                 
                                 
                                 $wemployee->setCbookId($member->getId());
@@ -209,7 +209,7 @@ class IntegrateCBook2WellnessCommand extends Command
                                     $io->note('... ... ... ... Synchronise Members (' . $wellnessOrgId . ')');
                                     if ($wemployee->getUpdatedDate() < $member->getUpdatedAt()) {
                                         $io->note('... ... ... Update Wellness (' . $wemployee->getId() . ': ' . $wemployee->getName() . ') with CBook Info (' . $member->getId() . ': ' . $member->getPerson()->getName() . ')');
-    
+                                        
                                         $member->initiateCode();
                                         $member->initiatePin();
                                         $wemployee->setCbookPin($member->getPin());
@@ -267,14 +267,18 @@ class IntegrateCBook2WellnessCommand extends Command
                             }
                             
                             if (empty($person)) {
-                                $io->note('... ... ... CBookPerson NOT found for WellnessEmployee (' . $ow->getId() . ': ' . $ow->getName() .'- IdNumber: '.$ow->getIdNumber(). '- Email: '.$ow->getEmailAddress().' ). Try to create one');
+                                $io->note('... ... ... CBookPerson NOT found for WellnessEmployee (' . $ow->getId() . ': ' . $ow->getName() . '- IdNumber: ' . $ow->getIdNumber() . '- Email: ' . $ow->getEmailAddress() . ' ). Try to create one');
                                 $person = new CBookPerson();
                                 $person->setEnabled(true);
                                 $person->setName($ow->getName());
                                 $person->setFamilyName($ow->getLastname());
                                 $person->setGivenName($ow->getFirstname());
                                 $person->setIdNumber($ow->getIdNumber());
-                                $person->setEmail($ow->getEmailAddress());
+                                $_email = '';
+                                if (empty($_email = $ow->getEmailAddress())) {
+                                    $_email = $ow->getIdNumber() . '@id-number.sg';
+                                }
+                                $person->setEmail($_email);
                                 $person->setBirthDate($ow->getDob());
                                 $cbookManager->persist($person);
                                 $cbookManager->flush($person);
@@ -301,7 +305,7 @@ class IntegrateCBook2WellnessCommand extends Command
                             $member->setWellnessEmployeeCode($ow->getEmployeeCode());
                             $member->setWellnessPin($ow->getPinCode());
                             $member->setEnabled($ow->isEnabled());
-    
+                            
                             $member->initiateCode();
                             $member->initiatePin();
                             $ow->setCbookId($member->getId());
@@ -320,7 +324,7 @@ class IntegrateCBook2WellnessCommand extends Command
                         
                     }
                 }
-                if($cborg->getSlug() !== $wellnessOrg->getSlug()){
+                if ($cborg->getSlug() !== $wellnessOrg->getSlug()) {
                     $wellnessOrg->setSlug($cborg->getSlug());
                     $wellnessManager->persist($wellnessOrg);
                 }

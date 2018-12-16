@@ -89,7 +89,7 @@ class CBookMember extends CBookThing
 
     public function initiatePin()
     {
-        if (empty($this->pinCode)) {
+        if (empty($this->pin)) {
             $this->pin = str_replace('O', '0', User::generate4DigitCode());
         }
         return $this;
@@ -97,7 +97,7 @@ class CBookMember extends CBookThing
 
     public function initiateCode()
     {
-        if (empty($this->employeeCode)) {
+        if (empty($this->code)) {
             $this->code = str_replace('O', '0', User::generate4DigitCode() . '-' . User::generateTimestampBasedCode());
         }
         return $this;
